@@ -31,7 +31,8 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @click.command()
 @click.option("--review_index", type=int, required=True)
-def main(review_index):
+@click.option("--is_sentiment", type=bool, default=False, help="리뷰 감정 분석을 수행할지 여부(OpenAI API 과금)")
+def main(review_index, is_sentiment):
     # S3에서 파일을 메모리로 가져오기
     response = s3.get_object(Bucket=S3_BUCKET_NAME, Key=f"reviews/product_{review_index}.parquet")
     logging.info(f"{review_index} 리뷰 데이터를 메모리로 다운로드 완료")
@@ -39,7 +40,10 @@ def main(review_index):
     # 메모리 상에서 데이터를 파싱하여 DataFrame으로 변환
     file_stream = io.BytesIO(response['Body'].read())
     df = pd.read_parquet(file_stream)
-    df["review_sentiment"] = calculate_positivie_score(df.review_text)
+
+    if is_sentiment:
+        df["review_sentiment"] = calculate_positivie_score(df.review_text)
+        logging.info(f"{review_index} 리뷰 감정 분석 완료")
 
     save_as_vectorstore(
         df.review_text.values, df.to_dict(orient="records"), review_index

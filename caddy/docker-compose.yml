@@ -1,0 +1,20 @@
+services:
+  caddy:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: caddy
+    ports:
+      - "80:80"    # HTTP
+      - "443:443"  # HTTPS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile  # Caddy 설정 파일 마운트
+    env_file:
+      - .env  # .env 파일에서 환경 변수 로드
+    environment:
+      - HOST_IP=${HOST_IP}
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

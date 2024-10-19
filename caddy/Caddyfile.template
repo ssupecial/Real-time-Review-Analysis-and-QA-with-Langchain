@@ -1,0 +1,6 @@
+:80 {
+    # /airflow 경로로 요청이 들어올 때, Airflow 컨테이너로 리다이렉트
+    handle /airflow* {
+        reverse_proxy {{HOST_IP}}:8081  # 환경 변수로 설정된 호스트 IP 사용
+    }
+}
