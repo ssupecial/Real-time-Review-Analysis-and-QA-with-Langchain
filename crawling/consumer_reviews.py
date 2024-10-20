@@ -25,7 +25,7 @@ consumer = KafkaConsumer(
 )
 
 # S3 버킷 이름
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "langchain-vectorstore")
 # S3 클라이언트 생성
 s3 = boto3.client('s3')
 # Parquet 파일을 로컬에 저장하지 않고 바로 S3에 업로드하는 함수
@@ -63,6 +63,7 @@ for message in consumer:
     # 해당 상품 리뷰 수집이 끝났으면 Parquet 파일로 저장
     if finish:
         reviews_df = pd.DataFrame(product_reviews[product_index])
+        logging.info(f"Finish collecting reviews - {reviews_df.info()}")
 
         # 로컬 파일로 저장하지 않고 S3에 바로 업로드
         upload_parquet_to_s3(reviews_df, product_index)
@@ -71,6 +72,7 @@ for message in consumer:
         del product_reviews[product_index]
         continue
 
-    review_data.pop('finish', None)
-    product_reviews[product_index].append(review_data)
+    else:
+        review_data.pop('finish', None)
+        product_reviews[product_index].append(review_data)
     logging.info(f"Get data - {len(product_reviews[product_index])}")

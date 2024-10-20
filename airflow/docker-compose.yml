@@ -29,6 +29,8 @@ x-airflow-common:
     AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     AWS_DEFAULT_REGION: ap-northeast-2
     S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+    HOME_PATH: ${HOME_PATH}
+    OPENAI_API_KEY: ${OPENAI_API_KEY}
 
   volumes:
     &airflow_volumes
@@ -190,6 +192,8 @@ services:
       # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
       DUMB_INIT_SETSID: "0"
     restart: always
+    group_add:
+    - ${DOCKER_GID} # docker group
     depends_on:
       <<: *airflow-common-depends-on
       init:
