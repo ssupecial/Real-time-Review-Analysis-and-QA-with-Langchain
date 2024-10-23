@@ -17,7 +17,7 @@ S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 with DAG(
     dag_id='preprocess_reviews',
     start_date=days_ago(1),
-    schedule_interval=dt.timedelta(minutes=3),
+    schedule_interval=dt.timedelta(hours=2),
     catchup=False,
     max_active_runs=1,
 ) as dag:
