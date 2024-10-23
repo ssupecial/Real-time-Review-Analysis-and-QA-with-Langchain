@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+boto3
+huggingface_hub
+langchain-community
+sentence-transformers 
+faiss-cpu
+openai

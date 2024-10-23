@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  app:
+    build: 
+      context: ./fastapi
+      dockerfile: Dockerfile
+    container_name: fastapi
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+    volumes:
+      - ~/.aws/credentials:/root/.aws/credentials
+    ports:
+      - "8000:8000"
+    command: uvicorn app:app --host 0.0.0.0 --port 8000
+
+  dash:
+    build: 
+      context: ./dash
+      dockerfile: Dockerfile
+    container_name: dash
+    environment:
+      - API_HOST=app
+      - API_PORT=8000
+    ports:
+      - "8050:8050"
+    command: python app.py
