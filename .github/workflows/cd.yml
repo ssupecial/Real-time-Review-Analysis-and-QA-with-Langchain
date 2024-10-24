@@ -16,4 +16,4 @@ jobs:
 
     - name: Run Docker Compose
       working-directory: ./web
-      run: docker-compose up -d --build
+      run: docker compose up -d --build
