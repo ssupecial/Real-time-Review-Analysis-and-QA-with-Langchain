@@ -37,6 +37,7 @@ with DAG(
         command='--review_index {{ ti.xcom_pull(task_ids="s3_sensor", key="new_file_index") }} --is_sentiment True',
         auto_remove="force",
         network_mode='airflow',
+        docker_url='unix://var/run/docker.sock',
         container_name='preprocess_reviews_{{ ti.xcom_pull(task_ids="s3_sensor", key="new_file_index") }}',
         environment={
             "S3_BUCKET_NAME": os.getenv("S3_BUCKET_NAME"),
