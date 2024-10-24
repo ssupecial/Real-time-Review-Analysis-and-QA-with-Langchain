@@ -35,6 +35,10 @@ hf = HuggingFaceEmbeddings(model_name="jhgan/ko-sroberta-multitask")
 
 app = FastAPI()
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/ask")
 def get_answer(request: QueryRequest):
     product_id = request.product_id

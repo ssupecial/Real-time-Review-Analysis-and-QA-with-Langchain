@@ -60,8 +60,12 @@ app.layout = html.Div([
     # 질문에 대한 답변
     html.Div(id='answer-content'),
 
-    # 긍/부정 비율 (처음엔 안 보임)
+    html.H1("관련 리뷰 상위 10개"),
+
+    # 긍/부정 비율
     dcc.Graph(id='sentiment-graph', figure=go.Figure()),
+
+    
 
     # 리뷰 테이블 (긍정/부정, 점수, 작성 날짜, 리뷰 내용)
     dash_table.DataTable(
@@ -146,7 +150,7 @@ def update_output(n_clicks, product_id, question):
             # 질문 답변 업데이트
             answer_content = html.Div([
                 html.H3("관련 리뷰를 기반으로 생성된 요약 답변입니다."),
-                html.P(answer)
+                html.H3(answer)
             ])
 
             return (
