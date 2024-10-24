@@ -16,4 +16,11 @@ jobs:
 
     - name: Run Docker Compose
       working-directory: ./web
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        DYANMODB_TABLE_NAME: ${{ secrets.DYANMODB_TABLE_NAME }}
       run: docker compose up -d --build
+
+    - name: Prune unused Docker objects
+      run: docker system prune -f
