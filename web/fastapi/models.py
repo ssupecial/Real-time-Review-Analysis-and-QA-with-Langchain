@@ -11,8 +11,8 @@ class Review(BaseModel):
 class Metadata(BaseModel):
     name: str
     count: str
-    score_distribution: Dict[str, str]  # 점수 분포
-    keyword_distribution: Dict[str, Dict[str, str]]  # 키워드 분포
+    score_distribution: Dict[str, int]  # 점수 분포
+    keyword_distribution: Dict[str, Dict[str, int]]  # 키워드 분포
 
 class QueryRequest(BaseModel):
     product_id: int

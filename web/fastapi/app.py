@@ -11,6 +11,7 @@ import json
 from openai import OpenAI
 from boto3.dynamodb.conditions import Key
 from models import Review, Metadata, QueryRequest, QueryResponse
+import re
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s - %(message)s')
 
@@ -52,6 +53,7 @@ def get_answer(request: QueryRequest):
         )
     
     product_metadata = process_metadata(product_metadata[0])
+    logging.info(f"상품 메타데이터: {product_metadata}")
 
     # 질문에 대한 유사한 리뷰 탐색 및 답변을 생성
     similar_reviews = get_similar_reviews(product_id, question)
@@ -122,13 +124,13 @@ def generate_answer(question: str, similar_reviews: List[Review]):
             },
             {
                 "role": "user",
-                "content": "다음 리뷰들을 바탕으로 사용자 질문에 대해 3~4줄의 적절한 답변을 작성하세요."
+                "content": "다음 리뷰들을 바탕으로 사용자 질문에 대해 적절한 답변을 작성하세요."
                 f"질문: {question}"
                 f"리뷰들: {reviews_text}"
 
             },
         ],
-        max_tokens=200,
+        max_tokens=300,
     )
 
     return response.choices[0].message.content.strip()
@@ -149,24 +151,24 @@ def process_metadata(metadata: dict):
     ratio_arr = metadata['ratio'].split('\n')
     score_distribution = {}
     for i in range(0, len(ratio_arr), 2):
-        score_distribution[ratio_arr[i+1]] = ratio_arr[i]
+        score_distribution[ratio_arr[i+1]] = int(ratio_arr[i][:-1])
 
     keyword_arr = metadata['ratio_cate'].split('\n')
     keyword_distribution = {"피부타입": {}, "피부고민": {}, "자극도": {}}
     keyword_distribution["피부타입"] = {
-        keyword_arr[1]: keyword_arr[2],
-        keyword_arr[3]: keyword_arr[4],
-        keyword_arr[5]: keyword_arr[6],
+        keyword_arr[1]: int(keyword_arr[2][:-1]),
+        keyword_arr[3]: int(keyword_arr[4][:-1]),
+        keyword_arr[5]: int(keyword_arr[6][:-1]),
     }
     keyword_distribution["피부고민"] = {
-        keyword_arr[8]: keyword_arr[9],
-        keyword_arr[10]: keyword_arr[11],
-        keyword_arr[12]: keyword_arr[13],
+        keyword_arr[8]: int(keyword_arr[9][:-1]),
+        keyword_arr[10]: int(keyword_arr[11][:-1]),
+        keyword_arr[12]: int(keyword_arr[13][:-1]),
     }
     keyword_distribution["자극도"] = {
-        keyword_arr[15]: keyword_arr[16],
-        keyword_arr[17]: keyword_arr[18],
-        keyword_arr[19]: keyword_arr[20],
+        keyword_arr[15]: int(keyword_arr[16][:-1]),
+        keyword_arr[17]: int(keyword_arr[18][:-1]),
+        keyword_arr[19]: int(keyword_arr[20][:-1]),
     }
 
     product_metadata = Metadata(
